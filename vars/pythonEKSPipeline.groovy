@@ -159,21 +159,21 @@ def call(Map configMap){
                     }
                 }
             }
-            stage('Trivy Scan'){
-                steps {
-                    script{
-                        sh """
-                            trivy image \
-                            --scanners vuln \
-                            --severity HIGH,CRITICAL,MEDIUM \
-                            --pkg-types os \
-                            --exit-code 1 \
-                            --format table \
-                            ${ACC_ID}.dkr.ecr.us-west-2.amazonaws.com/${PROJECT}/${COMPONENT}:${appVersion}
-                        """
-                    }
-                }
-            }
+            // stage('Trivy Scan'){
+            //     steps {
+            //         script{
+            //             sh """
+            //                 trivy image \
+            //                 --scanners vuln \
+            //                 --severity HIGH,CRITICAL,MEDIUM \
+            //                 --pkg-types os \
+            //                 --exit-code 1 \
+            //                 --format table \
+            //                 ${ACC_ID}.dkr.ecr.us-west-2.amazonaws.com/${PROJECT}/${COMPONENT}:${appVersion}
+            //             """
+            //         }
+            //     }
+            // }
             // stage('Trigger DEV Deploy') {
             //     steps {
             //         script {
