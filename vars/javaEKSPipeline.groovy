@@ -6,6 +6,10 @@ def call(Map configMap){
                 label 'AGENT-1'
             }
         }
+        tools {
+        // This must match the name you set in Step 1
+        maven 'maven' 
+        }
         environment {
             COURSE = "Jenkins"
             appVersion = ""
