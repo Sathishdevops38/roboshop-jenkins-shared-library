@@ -28,7 +28,7 @@ def call(Map configMap){
                 steps {
                     script{
                         dir("${env.SUBDIR}") {
-                            def pom = readMavenPom file: 'pox.xml'
+                            def pom = readMavenPom file: 'pom.xml'
                             appVersion = pom.version
                             echo "app version: ${appVersion}"  
                         }    
