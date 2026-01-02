@@ -87,61 +87,61 @@ def call(Map configMap){
                     github_auth  = credentials('github_auth') 
                 }
 
-                steps {
-                    script {
-                        dir("${env.SUBDIR}") {
-                            sh """
-                                echo "Fetching Dependabot alerts for repo: ${env.GITHUB_OWNER}/${env.GITHUB_REPO}..."
+            //     steps {
+            //         script {
+            //             dir("${env.SUBDIR}") {
+            //                 sh """
+            //                     echo "Fetching Dependabot alerts for repo: ${env.GITHUB_OWNER}/${env.GITHUB_REPO}..."
 
-                                # 1. Fetch alerts (Using double quotes allows ${github_auth} to be injected)
-                                response=\$(curl -s \
-                                    -H "Authorization: token ${github_auth}" \
-                                    -H "Accept: application/vnd.github+json" \
-                                    "${env.GITHUB_API}/repos/${env.GITHUB_OWNER}/${env.GITHUB_REPO}/dependabot/alerts?per_page=100&state=open")
+            //                     # 1. Fetch alerts (Using double quotes allows ${github_auth} to be injected)
+            //                     response=\$(curl -s \
+            //                         -H "Authorization: token ${github_auth}" \
+            //                         -H "Accept: application/vnd.github+json" \
+            //                         "${env.GITHUB_API}/repos/${env.GITHUB_OWNER}/${env.GITHUB_REPO}/dependabot/alerts?per_page=100&state=open")
 
-                                # 2. Check for API errors (Bad credentials / 404)
-                                if echo "\$response" | grep -q "message"; then
-                                    echo "❌ API Error Detected:"
-                                    echo "\$response" | jq -r .message
-                                    exit 1
-                                fi
+            //                     # 2. Check for API errors (Bad credentials / 404)
+            //                     if echo "\$response" | grep -q "message"; then
+            //                         echo "❌ API Error Detected:"
+            //                         echo "\$response" | jq -r .message
+            //                         exit 1
+            //                     fi
 
-                                # 3. Filter by Severity AND Subfolder (${COMPONENT})
-                                # Use --arg to pass the folder name into jq safely
-                                high_critical_open_count=\$(echo "\$response" | jq --arg SUBFOLDER "${COMPONENT}-ci/" '[.[] 
-                                    | select(
-                                        .state == "open"
-                                        and (.security_advisory.severity == "high" or .security_advisory.severity == "critical")
-                                        and (.dependency.manifest_path | contains(\$SUBFOLDER))
-                                    )
-                                ] | length')
+            //                     # 3. Filter by Severity AND Subfolder (${COMPONENT})
+            //                     # Use --arg to pass the folder name into jq safely
+            //                     high_critical_open_count=\$(echo "\$response" | jq --arg SUBFOLDER "${COMPONENT}-ci/" '[.[] 
+            //                         | select(
+            //                             .state == "open"
+            //                             and (.security_advisory.severity == "high" or .security_advisory.severity == "critical")
+            //                             and (.dependency.manifest_path | contains(\$SUBFOLDER))
+            //                         )
+            //                     ] | length')
 
-                                echo "Open HIGH/CRITICAL alerts in ${COMPONENT}-ci/: \$high_critical_open_count"
+            //                     echo "Open HIGH/CRITICAL alerts in ${COMPONENT}-ci/: \$high_critical_open_count"
 
-                                # 4. Conditional Logic
-                                if [ "\$high_critical_open_count" -gt 0 ]; then
-                                    echo "❌ Blocking pipeline due to OPEN HIGH/CRITICAL Dependabot alerts in ${COMPONENT}-ci/"
-                                    echo "Affected dependencies:"
+            //                     # 4. Conditional Logic
+            //                     if [ "\$high_critical_open_count" -gt 0 ]; then
+            //                         echo "❌ Blocking pipeline due to OPEN HIGH/CRITICAL Dependabot alerts in ${COMPONENT}-ci/"
+            //                         echo "Affected dependencies:"
                                     
-                                    echo "\$response" | jq --arg SUBFOLDER "${COMPONENT}-ci/" '.[] 
-                                    | select(.state=="open" 
-                                        and (.security_advisory.severity=="high" or .security_advisory.severity=="critical")
-                                        and (.dependency.manifest_path | contains(\$SUBFOLDER))
-                                    )
-                                    | {
-                                        package: .dependency.package.name, 
-                                        severity: .security_advisory.severity, 
-                                        manifest: .dependency.manifest_path,
-                                        summary: .security_advisory.summary
-                                    }'
-                                    exit 1
-                                else
-                                    echo "✅ No OPEN HIGH/CRITICAL Dependabot alerts found in ${COMPONENT}-ci/"
-                                fi
-                            """
-                        }    
-                    }
-            }
+            //                         echo "\$response" | jq --arg SUBFOLDER "${COMPONENT}-ci/" '.[] 
+            //                         | select(.state=="open" 
+            //                             and (.security_advisory.severity=="high" or .security_advisory.severity=="critical")
+            //                             and (.dependency.manifest_path | contains(\$SUBFOLDER))
+            //                         )
+            //                         | {
+            //                             package: .dependency.package.name, 
+            //                             severity: .security_advisory.severity, 
+            //                             manifest: .dependency.manifest_path,
+            //                             summary: .security_advisory.summary
+            //                         }'
+            //                         exit 1
+            //                     else
+            //                         echo "✅ No OPEN HIGH/CRITICAL Dependabot alerts found in ${COMPONENT}-ci/"
+            //                     fi
+            //                 """
+            //             }    
+            //         }
+            // }
             }
             stage('Build Image') {
                 steps {
