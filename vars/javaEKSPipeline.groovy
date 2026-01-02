@@ -83,14 +83,14 @@ def call(Map configMap){
                     }
                 }
             }
-            stage('Dependabot Security Gate') {
-                environment {
-                    GITHUB_OWNER = 'sathishdevops38'
-                    GITHUB_REPO  = 'roboshop-components-ci-cd'
-                    GITHUB_API   = 'https://api.github.com'
-                    // This creates a shell variable named github_auth
-                    github_auth  = credentials('github_auth') 
-                }
+            // stage('Dependabot Security Gate') {
+            //     environment {
+            //         GITHUB_OWNER = 'sathishdevops38'
+            //         GITHUB_REPO  = 'roboshop-components-ci-cd'
+            //         GITHUB_API   = 'https://api.github.com'
+            //         // This creates a shell variable named github_auth
+            //         github_auth  = credentials('github_auth') 
+            //     }
 
             //     steps {
             //         script {
@@ -147,7 +147,7 @@ def call(Map configMap){
             //             }    
             //         }
             // }
-            }
+            // }
             stage('Build Image') {
                 steps {
                     script{
